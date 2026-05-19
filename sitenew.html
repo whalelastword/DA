@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Защита проекта: Анализ онлайн-покупок | Цифровое поведение потребителей</title>
+    <!-- Chart.js CDN для графиков -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.5;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header / Hero */
+        .hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 60px 0 80px;
+            text-align: center;
+            border-bottom: 4px solid #3b82f6;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            color: #cbd5e1;
+        }
+
+        .nav-button {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.5);
+        }
+
+        /* Sections */
+        .section {
+            margin-bottom: 64px;
+            scroll-margin-top: 30px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 32px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #3b82f6;
+            display: inline-block;
+        }
+
+        .grid-2col {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+            align-items: start;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -2px rgba(0,0,0,0.03), 0 10px 15px -3px rgba(0,0,0,0.05);
+            border: 1px solid #eef2f6;
+            transition: box-shadow 0.2s;
+        }
+
+        .card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 280px;
+            margin: 20px 0;
+        }
+
+        canvas {
+            max-height: 280px;
+            width: 100%;
+        }
+
+        .insight {
+            background: #f1f5f9;
+            padding: 16px 20px;
+            border-radius: 16px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            border-left: 4px solid #3b82f6;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+
+        th, td {
+            padding: 12px 8px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            font-weight: 600;
+            color: #0f172a;
+            background-color: #f8fafc;
+        }
+
+        footer {
+            background: #0f172a;
+            color: #94a3b8;
+            text-align: center;
+            padding: 32px;
+            margin-top: 48px;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 800px) {
+            .grid-2col {
+                grid-template-columns: 1fr;
+            }
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .nav-button {
+                position: static;
+                text-align: center;
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <div class="container">
+        <div class="nav-button">
+            <a href="index2.html" class="nav-btn">Перейти к коду</a>
+        </div>
+        <h1>Онлайн-покупки и цифровое поведение<br>россиян: социально-демографический анализ</h1>
+    </div>
+</div>
+
+<div class="container">
+    
+    <!-- ГИПОТЕЗЫ ИССЛЕДОВАНИЯ -->
+    <div class="section">
+        <div class="section-title">Гипотезы исследования</div>
+        <div class="grid-2col">
+            <div class="card">
+                <h3>Возраст и цифровая активность</h3>
+                <p>Существует статистически значимая обратная связь между возрастом и частотой использования интернета, а также долей онлайн-покупателей.</p>
+                <div class="insight">Подтверждена: в группе 18–29 лет 73% ежедневно проводят в интернете более 4 часов и 86% совершают покупки, тогда как среди людей старше 60 лет — лишь 15% и 39% соответственно.</div>
+            </div>
+            <div class="card">
+                <h3>Влияние пола на покупки</h3>
+                <p>Пол не оказывает значимого влияния на склонность к онлайн-покупкам.</p>
+                <div class="insight">χ²-тест: p-value = 0,91 (больше 0,05) — связь не обнаружена. Доля покупателей: мужчины 65,7%, женщины 64,7%.</div>
+            </div>
+            <div class="card">
+                <h3>Профессиональный статус</h3>
+                <p>Профессиональный статус значимо дифференцирует долю онлайн-покупателей. Предприниматели, работающие студенты и люди в декрете демонстрируют более высокую вовлеченность.</p>
+                <div class="insight">Наиболее активные группы: работающие студенты (94%), люди в декрете (89%), предприниматели (84%). Неработающие пенсионеры — лишь 39%.</div>
+            </div>
+            <div class="card">
+                <h3>Интенсивность использования интернета</h3>
+                <p>Интенсивность использования интернета напрямую коррелирует с вероятностью совершения онлайн-покупок.</p>
+                <div class="insight">Среди активных пользователей (более 4 часов в день) доля покупателей достигает 84%, среди не пользующихся интернетом — лишь 8%.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. ИСПОЛЬЗОВАНИЕ ИНТЕРНЕТА ПО ВОЗРАСТУ -->
+    <div class="section">
+        <div class="section-title">1. Использование интернета по возрастным группам</div>
+        <div class="grid-2col">
+            <div class="card">
+                <h3>Ежедневные пользователи</h3>
+                <div class="chart-container">
+                    <canvas id="dailyInternetChart"></canvas>
+                </div>
+                <div class="insight">Молодёжь (18–29 лет) почти в 5 раз активнее в интернете, чем люди старше 60 лет (73% против 15%).</div>
+            </div>
+            <div class="card">
+                <h3>Распределение частот использования</h3>
+                <table>
+                    <thead>
+                        <tr><th>Возраст</th><th>Ежедневно менее 4ч</th><th>Ежедневно более 4ч</th><th>Не пользуются</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>18–29 лет</td><td>24,5%</td><td><strong>73,1%</strong></td><td>1,4%</td></tr>
+                        <tr><td>30–44 лет</td><td>44,1%</td><td>48,4%</td><td>2,8%</td></tr>
+                        <tr><td>45–59 лет</td><td>52,1%</td><td>26,7%</td><td>10,7%</td></tr>
+                        <tr><td>60+ лет</td><td>33,1%</td><td>14,6%</td><td><strong>39,1%</strong></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. ОНЛАЙН-ПОКУПКИ В ЦЕЛОМ -->
+    <div class="section">
+        <div class="section-title">2. Общий опыт онлайн-покупок</div>
+        <div class="grid-2col">
+            <div class="card">
+                <h3>Доля покупателей</h3>
+                <div class="chart-container">
+                    <canvas id="overallPurchaseChart"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Структура</h3>
+                <div class="insight">65,2% опрошенных хотя бы раз совершали покупки онлайн. Доля тех, кто никогда не покупал — 34,6%.</div>
+                <div class="insight">Основной драйвер роста электронной коммерции — молодёжь и экономически активные группы.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. ПОКУПКИ ПО ВОЗРАСТУ -->
+    <div class="section">
+        <div class="section-title">3. Онлайн-покупки по возрастным группам</div>
+        <div class="grid-2col">
+            <div class="card">
+                <div class="chart-container">
+                    <canvas id="purchaseByAgeChart"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Тренд снижения с возрастом</h3>
+                <p>Максимальная доля покупателей зафиксирована в группе 18–29 лет — <strong>86,3%</strong>. Далее наблюдается плавное снижение:</p>
+                <ul style="margin-top: 12px; margin-left: 20px;">
+                    <li>30–44 лет → 78,1%</li>
+                    <li>45–59 лет → 62,3%</li>
+                    <li>60+ лет → 38,9%</li>
+                </ul>
+                <div class="insight">Коэффициент корреляции (возраст и покупки) ≈ -0.87, что подтверждает сильную обратную связь.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. ПОКУПКИ ПО ПОЛУ + ТЕСТ -->
+    <div class="section">
+        <div class="section-title">4. Онлайн-покупки по полу</div>
+        <div class="grid-2col">
+            <div class="card">
+                <div class="chart-container">
+                    <canvas id="purchaseByGenderChart"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Статистическая проверка</h3>
+                <p>χ²-тест независимости (пол и покупки):</p>
+                <ul style="margin: 12px 0 12px 20px;">
+                    <li>χ² = 0.186</li>
+                    <li>p-value = 0.911</li>
+                </ul>
+                <div class="insight"><strong>Гипотеза об отсутствии влияния пола подтверждена:</strong> пол не влияет на склонность к онлайн-покупкам. Гендерный разрыв отсутствует.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. ПРОФЕССИОНАЛЬНЫЙ СТАТУС И ПОКУПКИ -->
+    <div class="section">
+        <div class="section-title">5. Профессиональный статус и онлайн-покупки</div>
+        <div class="grid-2col">
+            <div class="card">
+                <h3>Доля покупателей по профессиональным группам</h3>
+                <div class="chart-container" style="height: auto; min-height: 360px;">
+                    <canvas id="professionChart"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Ключевые выводы</h3>
+                <p>Наиболее активные группы:</p>
+                <ul style="margin: 12px 0 12px 20px;">
+                    <li>Работающие студенты — 93,9%</li>
+                    <li>Люди в декретном отпуске — 89,4%</li>
+                    <li>Предприниматели — 83,9%</li>
+                </ul>
+                <p>Наименее активные: неработающие пенсионеры (38,9%), безработные (51,3%).</p>
+                <div class="insight">Экономическая активность и доступ к интернету являются сильными предикторами вовлечённости в электронную коммерцию.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Дополнительно: предприниматели и пол -->
+    <div class="section">
+        <div class="section-title">6. Предпринимательство и пол</div>
+        <div class="grid-2col">
+            <div class="card">
+                <div class="chart-container">
+                    <canvas id="entrepreneurGenderChart"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Гендерный состав предпринимателей</h3>
+                <p>Среди предпринимателей, собственников бизнеса:</p>
+                <ul style="margin-top: 12px; margin-left: 20px;">
+                    <li>Мужчины — <strong>60,9%</strong> (53 человека)</li>
+                    <li>Женщины — 39,1% (34 человека)</li>
+                </ul>
+                <div class="insight">Несмотря на отсутствие гендерных различий в частоте покупок, предпринимательство чаще встречается среди мужчин.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ИТОГОВЫЕ ВЫВОДЫ -->
+    <div class="section">
+        <div class="section-title">Заключение и практическая значимость</div>
+        <div class="card" style="background: linear-gradient(110deg, #f1f5f9, white);">
+            <p style="font-size: 1.05rem; margin-bottom: 16px;">Ключевые детерминанты онлайн-покупок: возраст, профессиональный статус, интенсивность использования интернета. Пол не является значимым фактором.</p>
+            <p style="font-size: 1.05rem;">Маркетинговые рекомендации: таргетированные кампании на молодёжь (18–35 лет), работающих студентов и предпринимателей, а также развитие программ лояльности для пенсионеров и безработных с целью повышения цифровой грамотности.</p>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>Данные опроса ВЦИОМ, анализ в Python (pandas, scipy, matplotlib), визуализация — Chart.js</p>
+</footer>
+
+<script>
+    // 1. Ежедневные пользователи интернета по возрастам
+    const dailyCtx = document.getElementById('dailyInternetChart').getContext('2d');
+    new Chart(dailyCtx, {
+        type: 'bar',
+        data: {
+            labels: ['18-29 лет', '30-44 лет', '45-59 лет', '60+ лет'],
+            datasets: [{
+                label: 'Ежедневно более 4 часов в интернете (%)',
+                data: [73.1, 48.4, 26.7, 14.6],
+                backgroundColor: '#3b82f6',
+                borderRadius: 10,
+                barPercentage: 0.65
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: (ctx) => `${ctx.raw}%` } } }
+        }
+    });
+
+    // 2. Общая доля покупок
+    const overallCtx = document.getElementById('overallPurchaseChart').getContext('2d');
+    new Chart(overallCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Приобретали', 'Не приобретали'],
+            datasets: [{ data: [65.2, 34.6], backgroundColor: ['#3b82f6', '#94a3b8'], borderWidth: 0 }]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (ctx) => `${ctx.raw}%` } } } }
+    });
+
+    // 3. Покупки по возрасту (линия)
+    const agePurchaseCtx = document.getElementById('purchaseByAgeChart').getContext('2d');
+    new Chart(agePurchaseCtx, {
+        type: 'line',
+        data: {
+            labels: ['18-29 лет', '30-44 лет', '45-59 лет', '60+ лет'],
+            datasets: [{
+                label: 'Доля покупателей (%)',
+                data: [86.3, 78.1, 62.3, 38.9],
+                borderColor: '#f97316',
+                backgroundColor: 'rgba(249,115,22,0.05)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.3,
+                pointBackgroundColor: '#f97316',
+                pointRadius: 5
+            }]
+        },
+        options: { responsive: true, plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.raw}%` } } } }
+    });
+
+    // 4. Покупки по полу
+    const genderCtx = document.getElementById('purchaseByGenderChart').getContext('2d');
+    new Chart(genderCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Мужской', 'Женский'],
+            datasets: [{
+                label: 'Совершали покупки (%)',
+                data: [65.7, 64.7],
+                backgroundColor: ['#0f172a', '#475569'],
+                borderRadius: 8
+            }]
+        },
+        options: { responsive: true, scales: { y: { max: 100, title: { display: true, text: '%' } } } }
+    });
+
+    // 5. Профессиональный статус (горизонтальная)
+    const profLabels = ['Работающие студенты', 'Декретный отпуск', 'Предприниматели', 'Работа по найму', 'Самозанятые', 'Работающие пенсионеры', 'Безработные', 'Неработающие пенсионеры'];
+    const profData = [93.9, 89.4, 83.9, 78.5, 69.0, 63.2, 51.3, 38.9];
+    const profCtx = document.getElementById('professionChart').getContext('2d');
+    new Chart(profCtx, {
+        type: 'bar',
+        data: {
+            labels: profLabels.reverse(),
+            datasets: [{
+                label: 'Доля покупателей (%)',
+                data: profData.reverse(),
+                backgroundColor: '#f59e0b',
+                borderRadius: 8
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.raw}%` } } }
+        }
+    });
+
+    // 6. Предприниматели по полу
+    const entCtx = document.getElementById('entrepreneurGenderChart').getContext('2d');
+    new Chart(entCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Мужчины (60.9%)', 'Женщины (39.1%)'],
+            datasets: [{ data: [60.9, 39.1], backgroundColor: ['#2c3e66', '#e2a03b'], borderWidth: 0 }]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    });
+</script>
+</body>
+</html>
